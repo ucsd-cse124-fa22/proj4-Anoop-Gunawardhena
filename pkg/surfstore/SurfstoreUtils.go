@@ -419,6 +419,10 @@ func BuildFile(fileblocks []*Block, metadata *FileMetaData, client RPCClient) {
 		fmt.Printf("Error During creating file in base dir %s", err)
 		os.Exit(1)
 	}
+	if len(fileblocks) == 0 {
+		outFD.Close()
+		return
+	}
 	for _, block := range fileblocks {
 		_, err := outFD.Write(block.BlockData)
 		if err != nil {
