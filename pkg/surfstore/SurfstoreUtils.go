@@ -129,6 +129,7 @@ func ClientSync(client RPCClient) {
 						err := os.Remove(filepath.Join(client.BaseDir, filename))
 						if err != nil {
 							fmt.Printf("couldn't locally delete file due to this error %s", err)
+							os.Exit(1)
 						}
 
 					} else {
@@ -165,6 +166,7 @@ func ClientSync(client RPCClient) {
 					err := os.Remove(filepath.Join(client.BaseDir, filename))
 					if err != nil {
 						fmt.Printf("couldn't locally delete file due to this error %s", err)
+						os.Exit(1)
 					}
 					continue
 				} else {
@@ -195,6 +197,7 @@ func ClientSync(client RPCClient) {
 						err := os.Remove(filepath.Join(client.BaseDir, filename))
 						if err != nil {
 							fmt.Printf("couldn't locally delete file due to this error %s", err)
+							os.Exit(1)
 						}
 						continue
 					} else {
@@ -250,6 +253,7 @@ func ClientSync(client RPCClient) {
 							err := os.Remove(filepath.Join(client.BaseDir, filename))
 							if err != nil {
 								fmt.Printf("couldn't locally delete file due to this error %s", err)
+								os.Exit(1)
 							}
 							continue
 						} else {
@@ -278,6 +282,7 @@ func ClientSync(client RPCClient) {
 						err := os.Remove(filepath.Join(client.BaseDir, filename))
 						if err != nil {
 							fmt.Printf("couldn't locally delete file due to this error %s", err)
+							os.Exit(1)
 						}
 						continue
 					} else {
@@ -331,7 +336,7 @@ func ClientSync(client RPCClient) {
 					p := new(int32)
 					err := client.UpdateFile(meta, p)
 					if err != nil {
-						fmt.Printf("Could update remote index of server due to this %s error \n", err)
+						fmt.Printf("Could not update remote index of server due to this %s error \n", err)
 						os.Exit(1)
 					}
 					if *p == int32(-1) {
@@ -360,6 +365,7 @@ func ClientSync(client RPCClient) {
 	errorwrite := WriteMetaFile(localIndex, client.BaseDir)
 	if errorwrite != nil {
 		fmt.Printf("Error writing back into index.txt : %s", errorwrite)
+		os.Exit(1)
 	}
 
 }
@@ -549,7 +555,7 @@ func UploadBlocks(filepath string, client RPCClient, blockaddress string, presen
 		return err
 	}
 	if stat.Size() == 0 {
-		fmt.Println("file is empty")
+		//fmt.Println("file is empty")
 		return nil
 		//Figure this out
 	}

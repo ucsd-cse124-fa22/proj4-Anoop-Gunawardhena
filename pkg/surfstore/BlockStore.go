@@ -12,25 +12,25 @@ type BlockStore struct {
 }
 
 func (bs *BlockStore) GetBlock(ctx context.Context, blockHash *BlockHash) (*Block, error) {
-	fmt.Printf("trying to get block from hash : %s", blockHash.Hash)
+	//fmt.Printf("trying to get block from hash : %s", blockHash.Hash)
 	hash := blockHash.Hash
 	val, present := bs.BlockMap[hash]
 	if present == false {
 		fmt.Printf("No block for hash %s", hash)
 		return nil, errors.New("No block present")
 	}
-	fmt.Println("got block")
+	//fmt.Println("got block")
 	return val, nil
 	//panic("todo")
 }
 
 func (bs *BlockStore) PutBlock(ctx context.Context, block *Block) (*Success, error) {
 	//panic("todo")
-	fmt.Println("trying to put block")
+	//fmt.Println("trying to put block")
 	hash := GetBlockHashString(block.BlockData)
 	bs.BlockMap[hash] = block
 	S := &Success{Flag: true}
-	fmt.Println("put block in for hash of %s", hash)
+	//fmt.Println("put block in for hash of %s", hash)
 	return S, nil
 }
 
@@ -38,7 +38,7 @@ func (bs *BlockStore) PutBlock(ctx context.Context, block *Block) (*Success, err
 // subset of in that are stored in the key-value store
 func (bs *BlockStore) HasBlocks(ctx context.Context, blockHashesIn *BlockHashes) (*BlockHashes, error) {
 	//panic("todo")
-	fmt.Println("starting hashbloks")
+	//fmt.Println("starting hashbloks")
 	hashIn := []string{}
 	if len(blockHashesIn.Hashes) == 0 {
 		toreturn := &BlockHashes{Hashes: hashIn}
@@ -52,7 +52,7 @@ func (bs *BlockStore) HasBlocks(ctx context.Context, blockHashesIn *BlockHashes)
 		}
 	}
 	toreturn := &BlockHashes{Hashes: hashIn}
-	fmt.Println("ended hashblocks")
+	//fmt.Println("ended hashblocks")
 
 	return toreturn, nil
 
