@@ -115,67 +115,67 @@ func ClientSync(client RPCClient) {
 					os.Exit(1)
 				}
 				if *p == -1 {
-					fmt.Println("local version is outdated")
-					newRemoteIndex := new(map[string]*FileMetaData)
-					error2 := client.GetFileInfoMap(newRemoteIndex)
-					if error2 != nil {
-						fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-						os.Exit(1)
-					}
-					newremoteindex := *newRemoteIndex
-					metaf := newremoteindex[filename]
-					if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-						localIndex[filename] = metaf
-						err := os.Remove(filepath.Join(client.BaseDir, filename))
-						if err != nil {
-							fmt.Printf("couldn't locally delete file due to this error %s", err)
-							os.Exit(1)
-						}
+					// fmt.Println("local version is outdated")
+					// newRemoteIndex := new(map[string]*FileMetaData)
+					// error2 := client.GetFileInfoMap(newRemoteIndex)
+					// if error2 != nil {
+					// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+					// 	os.Exit(1)
+					// }
+					// newremoteindex := *newRemoteIndex
+					// metaf := newremoteindex[filename]
+					// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+					// 	localIndex[filename] = metaf
+					// 	err := os.Remove(filepath.Join(client.BaseDir, filename))
+					// 	if err != nil {
+					// 		fmt.Printf("couldn't locally delete file due to this error %s", err)
+					// 		os.Exit(1)
+					// 	}
 
-					} else {
-						blockArr, filemetadata := DownloadBlocks(filename, client)
-						BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
-						localIndex[filename] = filemetadata
-						Dirmetamap[filename] = filemetadata
-					}
-					continue
-				}
-				fmt.Println("updated remote index")
-				localIndex[filename] = meta
-				newRemoteIndex := new(map[string]*FileMetaData)
-				error2 := client.GetFileInfoMap(newRemoteIndex)
-				if error2 != nil {
-					fmt.Printf("couldnt get remote index because %s", error2)
-					os.Exit(1)
-				}
-				useme := *newRemoteIndex
-				fmt.Print(FileMetaDataToString(useme[filename]))
-
-			} else { // doesnt exist in local index but exists remotely thus is outdated
-				fmt.Println("local version is outdated")
-				newRemoteIndex := new(map[string]*FileMetaData)
-				error2 := client.GetFileInfoMap(newRemoteIndex)
-				if error2 != nil {
-					fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-					os.Exit(1)
-				}
-				newremoteindex := *newRemoteIndex
-				metaf := newremoteindex[filename]
-				if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-					localIndex[filename] = metaf
-					err := os.Remove(filepath.Join(client.BaseDir, filename))
-					if err != nil {
-						fmt.Printf("couldn't locally delete file due to this error %s", err)
-						os.Exit(1)
-					}
-					continue
-				} else {
+					// } else {
 					blockArr, filemetadata := DownloadBlocks(filename, client)
 					BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
 					localIndex[filename] = filemetadata
 					Dirmetamap[filename] = filemetadata
+					//}
 					continue
 				}
+				// fmt.Println("updated remote index")
+				// localIndex[filename] = meta
+				// newRemoteIndex := new(map[string]*FileMetaData)
+				// error2 := client.GetFileInfoMap(newRemoteIndex)
+				// if error2 != nil {
+				// 	fmt.Printf("couldnt get remote index because %s", error2)
+				// 	os.Exit(1)
+				// }
+				// useme := *newRemoteIndex
+				// fmt.Print(FileMetaDataToString(useme[filename]))
+
+			} else { // doesnt exist in local index but exists remotely thus is outdated
+				// fmt.Println("local version is outdated")
+				// newRemoteIndex := new(map[string]*FileMetaData)
+				// error2 := client.GetFileInfoMap(newRemoteIndex)
+				// if error2 != nil {
+				// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+				// 	os.Exit(1)
+				// }
+				// newremoteindex := *newRemoteIndex
+				// metaf := RemoteIndexMap[filename]
+				// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+				// 	localIndex[filename] = metaf
+				// 	err := os.Remove(filepath.Join(client.BaseDir, filename))
+				// 	if err != nil {
+				// 		fmt.Printf("couldn't locally delete file due to this error %s", err)
+				// 		os.Exit(1)
+				// 	}
+				// 	continue
+				// } else {
+				blockArr, filemetadata := DownloadBlocks(filename, client)
+				BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
+				localIndex[filename] = filemetadata
+				Dirmetamap[filename] = filemetadata
+				continue
+				//}
 
 			}
 		} else { //eists in the local index(and by extention the remote index)
@@ -184,29 +184,29 @@ func ClientSync(client RPCClient) {
 				if value2.Version > value1.Version { //Remote index has a more recent version than local index and basedir
 
 					fmt.Println("local version is outdated")
-					newRemoteIndex := new(map[string]*FileMetaData)
-					error2 := client.GetFileInfoMap(newRemoteIndex)
-					if error2 != nil {
-						fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-						os.Exit(1)
-					}
-					newremoteindex := *newRemoteIndex
-					metaf := newremoteindex[filename]
-					if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-						localIndex[filename] = metaf
-						err := os.Remove(filepath.Join(client.BaseDir, filename))
-						if err != nil {
-							fmt.Printf("couldn't locally delete file due to this error %s", err)
-							os.Exit(1)
-						}
-						continue
-					} else {
-						blockArr, filemetadata := DownloadBlocks(filename, client)
-						BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
-						localIndex[filename] = filemetadata
-						Dirmetamap[filename] = filemetadata
-						continue
-					}
+					// newRemoteIndex := new(map[string]*FileMetaData)
+					// error2 := client.GetFileInfoMap(newRemoteIndex)
+					// if error2 != nil {
+					// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+					// 	os.Exit(1)
+					// }
+					// newremoteindex := *newRemoteIndex
+					//metaf := RemoteIndexMap[filename]
+					// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+					// 	localIndex[filename] = metaf
+					// 	err := os.Remove(filepath.Join(client.BaseDir, filename))
+					// 	if err != nil {
+					// 		fmt.Printf("couldn't locally delete file due to this error %s", err)
+					// 		os.Exit(1)
+					// 	}
+					// 	continue
+					// } else {
+					blockArr, filemetadata := DownloadBlocks(filename, client)
+					BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
+					localIndex[filename] = filemetadata
+					Dirmetamap[filename] = filemetadata
+					continue
+					//	}
 
 				}
 			} else { // the file in the base directory has been updated without updating the local index
@@ -240,58 +240,58 @@ func ClientSync(client RPCClient) {
 					}
 					if *p == -1 {
 						fmt.Println("local version is outdated")
-						newRemoteIndex := new(map[string]*FileMetaData)
-						error2 := client.GetFileInfoMap(newRemoteIndex)
-						if error2 != nil {
-							fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-							os.Exit(1)
-						}
-						newremoteindex := *newRemoteIndex
-						metaf := newremoteindex[filename]
-						if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-							localIndex[filename] = metaf
-							err := os.Remove(filepath.Join(client.BaseDir, filename))
-							if err != nil {
-								fmt.Printf("couldn't locally delete file due to this error %s", err)
-								os.Exit(1)
-							}
-							continue
-						} else {
-							blockArr, filemetadata := DownloadBlocks(filename, client)
-							BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
-							localIndex[filename] = filemetadata
-							Dirmetamap[filename] = filemetadata
-							continue
-						}
+						// newRemoteIndex := new(map[string]*FileMetaData)
+						// error2 := client.GetFileInfoMap(newRemoteIndex)
+						// if error2 != nil {
+						// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+						// 	os.Exit(1)
+						// }
+						// newremoteindex := *newRemoteIndex
+						// metaf := newremoteindex[filename]
+						// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+						// 	localIndex[filename] = metaf
+						// 	err := os.Remove(filepath.Join(client.BaseDir, filename))
+						// 	if err != nil {
+						// 		fmt.Printf("couldn't locally delete file due to this error %s", err)
+						// 		os.Exit(1)
+						// 	}
+						// 	continue
+						// } else {
+						blockArr, filemetadata := DownloadBlocks(filename, client)
+						BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
+						localIndex[filename] = filemetadata
+						Dirmetamap[filename] = filemetadata
+						continue
+						//}
 
 					}
 					localIndex[filename] = meta
 
 				} else { // This means that the remote index has a higher version than the local index and thus takes priority even if there is a new file in the abse dir
 					fmt.Println("local version is outdated")
-					newRemoteIndex := new(map[string]*FileMetaData)
-					error2 := client.GetFileInfoMap(newRemoteIndex)
-					if error2 != nil {
-						fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-						os.Exit(1)
-					}
-					newremoteindex := *newRemoteIndex
-					metaf := newremoteindex[filename]
-					if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-						localIndex[filename] = metaf
-						err := os.Remove(filepath.Join(client.BaseDir, filename))
-						if err != nil {
-							fmt.Printf("couldn't locally delete file due to this error %s", err)
-							os.Exit(1)
-						}
-						continue
-					} else {
-						blockArr, filemetadata := DownloadBlocks(filename, client)
-						BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
-						localIndex[filename] = filemetadata
-						Dirmetamap[filename] = filemetadata
-						continue
-					}
+					// newRemoteIndex := new(map[string]*FileMetaData)
+					// error2 := client.GetFileInfoMap(newRemoteIndex)
+					// if error2 != nil {
+					// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+					// 	os.Exit(1)
+					// }
+					// newremoteindex := *newRemoteIndex
+					// metaf := RemoteIndexMap[filename]
+					// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+					// 	localIndex[filename] = metaf
+					// 	err := os.Remove(filepath.Join(client.BaseDir, filename))
+					// 	if err != nil {
+					// 		fmt.Printf("couldn't locally delete file due to this error %s", err)
+					// 		os.Exit(1)
+					// 	}
+					// 	continue
+					// } else {
+					blockArr, filemetadata := DownloadBlocks(filename, client)
+					BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
+					localIndex[filename] = filemetadata
+					Dirmetamap[filename] = filemetadata
+					continue
+					//}
 
 				}
 
@@ -306,27 +306,27 @@ func ClientSync(client RPCClient) {
 		if !exists {
 			//file has been deleted locally
 			//check if remote index has been updated
-			newRemoteIndex := new(map[string]*FileMetaData)
-			error2 := client.GetFileInfoMap(newRemoteIndex)
-			if error2 != nil {
-				fmt.Printf("couldn't get remote file index due to this error: %s", error2)
-				os.Exit(1)
-			}
-			newremoteindex := *newRemoteIndex
-			metaf := newremoteindex[filename]
+			// newRemoteIndex := new(map[string]*FileMetaData)
+			// error2 := client.GetFileInfoMap(newRemoteIndex)
+			// if error2 != nil {
+			// 	fmt.Printf("couldn't get remote file index due to this error: %s", error2)
+			// 	os.Exit(1)
+			// }
+			// newremoteindex := *newRemoteIndex
+			metaf := RemoteIndexMap[filename]
 			if metaf.Version > meta.Version { //Remoteindex has a higher version so download it
 
-				if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
-					localIndex[filename] = metaf
+				// if len(metaf.BlockHashList) == 1 && metaf.BlockHashList[0] == "0" { //for when the remote file is a deleted version
+				// 	localIndex[filename] = metaf
 
-					continue
-				} else {
-					blockArr, filemetadata := DownloadBlocks(filename, client)
-					BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
-					localIndex[filename] = filemetadata
-					Dirmetamap[filename] = filemetadata
-					continue
-				}
+				// 	continue
+				// } else {
+				blockArr, filemetadata := DownloadBlocks(filename, client)
+				BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
+				localIndex[filename] = filemetadata
+				//Dirmetamap[filename] = filemetadata
+				continue
+
 			} else if metaf.Version == meta.Version {
 				// The versions are the same so can delete on remote as well
 				if !(len(meta.BlockHashList) == 1 && meta.BlockHashList[0] == "0") {
@@ -341,16 +341,16 @@ func ClientSync(client RPCClient) {
 					}
 					if *p == int32(-1) {
 						//Check if file already deleted
-						deleted, remoteversion := checkDeleted(filename, client)
-						if deleted {
-							localIndex[filename].Version = remoteversion
-							localIndex[filename].BlockHashList = []string{"0"}
-							continue
-						} //file has been updated
+						// deleted, remoteversion := checkDeleted(filename, client)
+						// if deleted {
+						// 	localIndex[filename].Version = remoteversion
+						// 	localIndex[filename].BlockHashList = []string{"0"}
+						// 	continue
+						// } //file has been updated
 						blockArr, filemetadata := DownloadBlocks(filename, client)
 						BuildFile(blockArr, filemetadata, client) //GET THE REMOTE VERSION OF FILE HERE (CONFLICT HAS OCCURED)
 						localIndex[filename] = filemetadata
-						Dirmetamap[filename] = filemetadata
+						//Dirmetamap[filename] = filemetadata
 						continue
 					}
 					localIndex[filename].Version = *p
@@ -420,14 +420,32 @@ func DownloadBlocks(filename string, client RPCClient) (blockarr []*Block, metad
 }
 func BuildFile(fileblocks []*Block, metadata *FileMetaData, client RPCClient) {
 	newFilePath := filepath.Join(client.BaseDir, metadata.Filename)
+	if len(fileblocks) == 0 {
+		outFD, err := os.Create(newFilePath)
+		if err != nil {
+			fmt.Printf("Error During creating file in base dir %s", err)
+			os.Exit(1)
+		}
+		outFD.Close()
+		return
+	}
+	if len(metadata.GetBlockHashList()) == 1 && metadata.GetBlockHashList()[0] == "0" {
+		_, err1 := os.Stat(newFilePath)
+		if os.IsNotExist(err1) {
+			return
+		}
+		err2 := os.Remove(newFilePath)
+		if err2 != nil {
+			fmt.Printf("couldn't locally delete file due to this error %s", err2)
+			os.Exit(1)
+		}
+		return
+	}
+
 	outFD, err := os.Create(newFilePath)
 	if err != nil {
 		fmt.Printf("Error During creating file in base dir %s", err)
 		os.Exit(1)
-	}
-	if len(fileblocks) == 0 {
-		outFD.Close()
-		return
 	}
 	for _, block := range fileblocks {
 		_, err := outFD.Write(block.BlockData)
@@ -436,10 +454,8 @@ func BuildFile(fileblocks []*Block, metadata *FileMetaData, client RPCClient) {
 			os.Exit(1)
 		}
 	}
-
-	outFD.Close()
-
 }
+
 func ComputeHashLists(list []os.DirEntry, base string, blockSize int) (map[string]*FileMetaData, error) {
 	hashlistMap := make(map[string]*FileMetaData)
 	//var block [blockSize]byte
