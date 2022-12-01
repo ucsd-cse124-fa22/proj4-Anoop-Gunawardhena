@@ -50,6 +50,8 @@ func main() {
 	args := flag.Args()
 
 	if len(args) != ARG_COUNT {
+		fmt.Print("problem")
+
 		flag.Usage()
 		os.Exit(EX_USAGE)
 	}
@@ -58,6 +60,7 @@ func main() {
 	baseDir := args[1]
 	blockSize, err := strconv.Atoi(args[2])
 	if err != nil {
+		fmt.Print("problem")
 		flag.Usage()
 		os.Exit(EX_USAGE)
 	}

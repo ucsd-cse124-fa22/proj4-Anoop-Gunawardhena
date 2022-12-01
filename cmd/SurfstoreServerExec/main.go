@@ -1,13 +1,17 @@
 package main
 
 import (
+	"cse224/proj4/pkg/surfstore"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"strconv"
 	"strings"
+
+	"google.golang.org/grpc"
 )
 
 // Usage String
@@ -67,5 +71,25 @@ func main() {
 }
 
 func startServer(hostAddr string, serviceType string, blockStoreAddr string) error {
-	panic("todo")
+	fmt.Print("started")
+	grpcServer := grpc.NewServer()
+
+	if serviceType == "block" {
+		surfstore.RegisterBlockStoreServer(grpcServer, surfstore.NewBlockStore())
+
+	}
+	if serviceType == "meta" {
+		surfstore.RegisterMetaStoreServer(grpcServer, surfstore.NewMetaStore(blockStoreAddr))
+
+	} else {
+		surfstore.RegisterMetaStoreServer(grpcServer, surfstore.NewMetaStore(blockStoreAddr))
+		surfstore.RegisterBlockStoreServer(grpcServer, surfstore.NewBlockStore())
+
+	}
+	l, e := net.Listen("tcp", hostAddr)
+	if e != nil {
+		return e
+	}
+	fmt.Print("Done")
+	return grpcServer.Serve(l)
 }
