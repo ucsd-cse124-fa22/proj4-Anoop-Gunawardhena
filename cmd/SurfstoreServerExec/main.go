@@ -74,18 +74,17 @@ func startServer(hostAddr string, serviceType string, blockStoreAddr string) err
 	fmt.Print("started")
 	grpcServer := grpc.NewServer()
 
-	if serviceType == "block" {
-		surfstore.RegisterBlockStoreServer(grpcServer, surfstore.NewBlockStore())
-
+	// Register rpc services
+	if serviceType != "block" {
+		metastore := surfstore.NewMetaStore(blockStoreAddr)
+		surfstore.RegisterMetaStoreServer(grpcServer, metastore)
 	}
-	if serviceType == "meta" {
-		surfstore.RegisterMetaStoreServer(grpcServer, surfstore.NewMetaStore(blockStoreAddr))
 
-	} else {
-		surfstore.RegisterMetaStoreServer(grpcServer, surfstore.NewMetaStore(blockStoreAddr))
-		surfstore.RegisterBlockStoreServer(grpcServer, surfstore.NewBlockStore())
-
+	if serviceType != "meta" {
+		blockstore := surfstore.NewBlockStore()
+		surfstore.RegisterBlockStoreServer(grpcServer, blockstore)
 	}
+
 	l, e := net.Listen("tcp", hostAddr)
 	if e != nil {
 		return e
