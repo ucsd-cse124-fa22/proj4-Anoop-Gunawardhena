@@ -1,2 +1,1 @@
-green.txt,1,
-hiya.txt,4,0 
+prop.txt,4,0 
