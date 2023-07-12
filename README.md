@@ -1,6 +1,7 @@
 
 
-This is the info document for Project 4: Surfstore, a part of CSE 124 Networked Services, in compiling this user manual, I have included sections from the original assignment document for your privilege.
+This is the info document for Project 4: Surfstore, a part of CSE 124 Networked Services, in compiling this user manual, I have included sections from the original assignment document for your privilege to better describe how this application works and its key integral components.
+However if you are interested in just using it : [Usage instructions](#Usage)
 
 SurfStore is a networked file storage application that is based on Dropbox, and lets you sync files to and from the “cloud”.I have implemented the cloud service and a demo client which interacts with the service via gRPC.
 Multiple clients can concurrently connect to the SurfStore service to access a common, shared set of files. Clients accessing SurfStore “see” a consistent set of updates to files, but SurfStore does not offer any guarantees about operations across files, meaning that it does not support multi-file transactions (such as atomic move).
@@ -37,7 +38,7 @@ The client should now compare the local index (and any changes to local files no
 First, it is possible that the remote index refers to a file not present in the local index or in the base directory. In this case, the client should download the blocks associated with that file, reconstitute that file in the base directory, and then add the updated FileInfo information to the local index.
 Next, it is possible that there are new files in the local base directory that aren’t in the local index or in the remote index. The client should upload the blocks corresponding to this file to the server, then update the server with the new FileInfo. If that update is successful, then the client should update its local index. Note it is possible that while this operation is in progress, some other client makes it to the server first, and creates the file first. In that case, the UpdateFile() operation will fail with a version error, and the client should handle this conflict as described in the next section.
 
-
+# Usage
 Before you get started, make sure you understand the following 2 things about Go. (These will also be covered in class and in discussions)
 1. Interfaces: They are named collections of method signatures. Here are some good resources to understand interfaces in Go:
     a. https://gobyexample.com/interfaces
