@@ -1,4 +1,4 @@
-![image](https://github.com/ucsd-cse124-fa22/proj4-Anoop-Gunawardhena/assets/76988884/969351fc-99b3-4386-b65f-747d2fe12d7e)# Surfstore
+
 
 This is the info document for Project 4: Surfstore, a part of CSE 124 Networked Services, in compiling this user manual, I have included sections from the original assignment document for your privilege.
 
