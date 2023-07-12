@@ -46,6 +46,7 @@ Next, it is possible that there are new files in the local base directory that a
 # Usage
 
 **Client**
+
 For this project, clients will sync the contents of a “base directory” by:
 ![Sample code](surfstore3.PNG)
 
@@ -71,28 +72,6 @@ When iteratively developing your implementation of Surfstore, it’ll be benefic
 For other scenarios where you might want to test having separate MetaStores and BlockStores, you can use the other two service types. Below, I’ve given examples for starting separate MetaStores and BlockStores locally, but you can just as easily do the same with different hosts e.g. maybe having the MetaStore on local and the BlockStore on an AWS instance. 
 ![Sample code6](surfstore6.PNG)
 
-
-
-
-## Implementation
-### Server
-`BlockStore.go` provides a skeleton implementation of the `BlockStoreInterface` and `MetaStore.go` provides a skeleton implementation of the `MetaStoreInterface` 
-**You must implement the methods in these 2 files which have `panic("todo")` as their body.**
-
-`cmd/SurfstoreServerExec/main.go` also has a method `startServer` **which you must implement**. Depending on the service type specified, it should register a `MetaStore`, `BlockStore`, or `Both` and start listening for connections from clients.
-
-### Client
-`SurfstoreRPCClient.go` provides the gRPC client stub for the surfstore gRPC server. **You must implement the methods in this file which have `panic("todo")` as their body.** (Hint: one of them has been implemented for you)
-
-`SurfstoreUtils.go` also has the following method which **you need to implement** for the sync logic of clients:
-```go
-/*
-Implement the logic for a client syncing with the server here.
-*/
-func ClientSync(client RPCClient) {
-	panic("todo")
-}
-```
 ## Usage
 1. Run your server using this:
 ```shell
