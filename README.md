@@ -47,59 +47,27 @@ Next, it is possible that there are new files in the local base directory that a
 
 **Client**
 For this project, clients will sync the contents of a “base directory” by:
-go run cmd/SurfstoreClientExec/main.go -d <meta_addr:port> <base_dir> <block_size>
-[!Sample code](surfstore3.PNG)
-Usage:
--d:
-Output log statements
-<meta_addr:port>: 
-(required) IP address and port of the MetaStore the client is syncing to
-<base_dir>:
-(required) Base directory of the client 
-<block_size>:
-(required) Size of the blocks used to fragment files
-
-
-
-
+![Sample code](surfstore3.PNG)
 
 The block size is specified as a command line option and you should use that instead of a hard-coded number.  Note that while your system must support different-sized blocks (specified on the command line), the size of the block will remain constant during any particular series of tests.  So we might run a set of tests with a block size of 4096, then clear everything and run a totally different set of tests in a new environment with a block size of 1 megabyte (for example).
-Server
+
+**Server**
+
 As mentioned earlier, Surfstore is composed of two services: MetaStore and BlockStore. In this project, the location of the MetaStore and BlockStore shouldn’t matter. In other words, the MetaStore and BlockStore could be serviced by a single server process, separate server processes on the same host, or separate server processes on different hosts. Regardless of where these services reside, the functionality should be the same.
 Starting a Server  
-Starting a server by:
 
-go run cmd/SurfstoreServerExec/main.go -s <service_type> -p <port> -l -d (blockstoreAddr*)
-
-Usage:
--s <service_type>: 
-(required) This defines the service provided by this server. It can be “meta”, “block”, or “both” (you don’t need to include the quotation marks).
--p <port>:
-(default=8080) Port to accept connections
--l:
-Only listen on localhost if included
--d:
-Output log statements
-(blockStoreAddr*):
-BlockStore address (ip:port) the MetaStore should be initialized with. (Note: if service_type = both, then you should also include the address of the server that you’re starting)
+![Sample code4](surfsore4.PNG)
 
 
 
+**Single Server Process**
 
-Single Server Process
 When iteratively developing your implementation of Surfstore, it’ll be beneficial to have an easy way to start both a MetaStore and BlockStore. This can be done with service_type = both. Internally, this should register both the MetaStore interface and BlockStore interface to the grpcServer.
 
-/*
-  The command below starts a server with service_type = both (MetaStore and 
-  BlockStore) that listens only to localhost at port 8081. Also, since 
-  `both` includes the MetaStore interface, you’ll also have to include the
-  ip:port of the server that you’re starting with this command. In this 
-  case, this will be `localhost:8081`.
-*/
+![Sample code5](surfstore5.PNG)
 
-go run cmd/SurfstoreServerExec/main.go -s both -p 8081 -l localhost:8081
+**Separate Server Processes**
 
-Separate Server Processes
 For other scenarios where you might want to test having separate MetaStores and BlockStores, you can use the other two service types. Below, I’ve given examples for starting separate MetaStores and BlockStores locally, but you can just as easily do the same with different hosts e.g. maybe having the MetaStore on local and the BlockStore on an AWS instance. 
 
 /*
