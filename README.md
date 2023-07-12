@@ -19,6 +19,7 @@ The MetaStore service manages the metadata of files and the entire system. Most 
 
 
 **Data Logistics**
+
 In this section, we’ll go over some of the fundamentals of SurfStore: blocks, files, and versioning. 
 Blocks, hashes, and hashlists
 A file in SurfStore is broken into an ordered sequence of one or more blocks. Each block is of uniform size (defined by the command line argument), except for the last block in the file, which may be smaller (but must be at least 1 byte large). As an example, assume the block size is 4096 bytes, and consider the following file:
