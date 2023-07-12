@@ -72,17 +72,6 @@ When iteratively developing your implementation of Surfstore, it’ll be benefic
 For other scenarios where you might want to test having separate MetaStores and BlockStores, you can use the other two service types. Below, I’ve given examples for starting separate MetaStores and BlockStores locally, but you can just as easily do the same with different hosts e.g. maybe having the MetaStore on local and the BlockStore on an AWS instance. 
 ![Sample code6](surfstore6.PNG)
 
-## Usage
-1. Run your server using this:
-```shell
-go run cmd/SurfstoreServerExec/main.go -s <service> -p <port> -l -d (BlockStoreAddr*)
-```
-Here, `service` should be one of three values: meta, block, or both. This is used to specify the service provided by the server. `port` defines the port number that the server listens to (default=8080). `-l` configures the server to only listen on localhost. `-d` configures the server to output log statements. Lastly, (BlockStoreAddr\*) is the BlockStore address that the server is configured with. If `service=both` then the BlockStoreAddr should be the `ip:port` of this server.
-
-2. Run your client using this:
-```shell
-go run cmd/SurfstoreClientExec/main.go -d <meta_addr:port> <base_dir> <block_size>
-```
 
 ## Examples:
 ```shell
@@ -131,5 +120,3 @@ make run-blockstore
 make run-metastore
 ```
 
-## Testing 
-On gradescope, only a subset of test cases will be visible, so we highly encourage you to come up with different scenarios like the one described above. You can then match the outcome of your implementation to the expected output based on the theory provided in the writeup.
