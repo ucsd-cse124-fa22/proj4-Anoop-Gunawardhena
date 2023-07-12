@@ -56,7 +56,7 @@ The block size is specified as a command line option and you should use that ins
 As mentioned earlier, Surfstore is composed of two services: MetaStore and BlockStore. In this project, the location of the MetaStore and BlockStore shouldn’t matter. In other words, the MetaStore and BlockStore could be serviced by a single server process, separate server processes on the same host, or separate server processes on different hosts. Regardless of where these services reside, the functionality should be the same.
 Starting a Server  
 
-![Sample code4](surfsore4.PNG)
+![Sample code4](surfstore4.PNG)
 
 
 
