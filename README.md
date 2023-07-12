@@ -30,6 +30,7 @@ A file in SurfStore is broken into an ordered sequence of one or more blocks. Ea
 The file ‘MyFile.mp4’ is 14,437 bytes long, and the block size is 4KB. The file is broken into blocks b0, b1, b2, and b3 (which is only 2,149 bytes long). For each block, a hash value is generated using the SHA-256 hash function. So for MyFile.mp4, those hashes will be denoted as [h0, h1, h2, h3] in the same order as the blocks. This set of hash values, in order, represents the file, and is referred to as the hashlist. Note that if you are given a block, you can compute its hash by applying the SHA-256 hash function to the block. This also means that if you change data in a block the hash value will change as a result. To update a file, you change a subset of the bytes in the file, and recompute the hashlist. Depending on the modification, at least one, but perhaps all, of the hash values in the hashlist will change.
 
 **Indexes**
+
 The client program will create and maintain an index.txt file in the base directory which holds local, client-specific information that must be kept between invocations of the client. If that file doesn’t exist, the client should create it. In particular, the index.txt contains a copy of the server’s FileInfoMap accurate as of the last time that sync was called. The purpose of this index file is to detect files that have changed, or been added to the base directory since the last time that the client executed.
 
 
@@ -43,6 +44,83 @@ First, it is possible that the remote index refers to a file not present in the 
 Next, it is possible that there are new files in the local base directory that aren’t in the local index or in the remote index. The client should upload the blocks corresponding to this file to the server, then update the server with the new FileInfo. If that update is successful, then the client should update its local index. Note it is possible that while this operation is in progress, some other client makes it to the server first, and creates the file first. In that case, the UpdateFile() operation will fail with a version error, and the client should handle this conflict as described in the next section.
 
 # Usage
+
+Client
+For this project, clients will sync the contents of a “base directory” by:
+go run cmd/SurfstoreClientExec/main.go -d <meta_addr:port> <base_dir> <block_size>
+
+Usage:
+-d:
+Output log statements
+<meta_addr:port>: 
+(required) IP address and port of the MetaStore the client is syncing to
+<base_dir>:
+(required) Base directory of the client 
+<block_size>:
+(required) Size of the blocks used to fragment files
+
+
+
+
+
+The block size is specified as a command line option and you should use that instead of a hard-coded number.  Note that while your system must support different-sized blocks (specified on the command line), the size of the block will remain constant during any particular series of tests.  So we might run a set of tests with a block size of 4096, then clear everything and run a totally different set of tests in a new environment with a block size of 1 megabyte (for example).
+Server
+As mentioned earlier, Surfstore is composed of two services: MetaStore and BlockStore. In this project, the location of the MetaStore and BlockStore shouldn’t matter. In other words, the MetaStore and BlockStore could be serviced by a single server process, separate server processes on the same host, or separate server processes on different hosts. Regardless of where these services reside, the functionality should be the same.
+Starting a Server  
+Starting a server by:
+
+go run cmd/SurfstoreServerExec/main.go -s <service_type> -p <port> -l -d (blockstoreAddr*)
+
+Usage:
+-s <service_type>: 
+(required) This defines the service provided by this server. It can be “meta”, “block”, or “both” (you don’t need to include the quotation marks).
+-p <port>:
+(default=8080) Port to accept connections
+-l:
+Only listen on localhost if included
+-d:
+Output log statements
+(blockStoreAddr*):
+BlockStore address (ip:port) the MetaStore should be initialized with. (Note: if service_type = both, then you should also include the address of the server that you’re starting)
+
+
+
+
+Single Server Process
+When iteratively developing your implementation of Surfstore, it’ll be beneficial to have an easy way to start both a MetaStore and BlockStore. This can be done with service_type = both. Internally, this should register both the MetaStore interface and BlockStore interface to the grpcServer.
+
+/*
+  The command below starts a server with service_type = both (MetaStore and 
+  BlockStore) that listens only to localhost at port 8081. Also, since 
+  `both` includes the MetaStore interface, you’ll also have to include the
+  ip:port of the server that you’re starting with this command. In this 
+  case, this will be `localhost:8081`.
+*/
+
+go run cmd/SurfstoreServerExec/main.go -s both -p 8081 -l localhost:8081
+
+Separate Server Processes
+For other scenarios where you might want to test having separate MetaStores and BlockStores, you can use the other two service types. Below, I’ve given examples for starting separate MetaStores and BlockStores locally, but you can just as easily do the same with different hosts e.g. maybe having the MetaStore on local and the BlockStore on an AWS instance. 
+
+/*
+  The first command below creates a server process that registers 
+  only the BlockStore interface and listens only to localhost on port 8081. 
+  (& just means to run the process in the background i.e. the shell
+  (parent) doesn’t wait for the started server (child) to finish. However,
+  you’ll need to remember to kill the process when you’re done. Another way
+  to do this is just to run the commands below on separate terminals 
+  without the ‘&’). 
+
+  Next, the second command starts a server process that registers only the 
+  MetaStore interface and listens only to localhost on port 8080 (default). 
+  Furthermore, it’s configured to be initialized with the address of the 
+  BlockStore that we create above (localhost:8081)
+*/
+
+> go run cmd/SurfstoreServerExec/main.go -s block -p 8081 -l &
+> go run cmd/SurfstoreServerExec/main.go -s meta -l localhost:8081
+
+
 Before you get started, make sure you understand the following 2 things about Go. (These will also be covered in class and in discussions)
 1. Interfaces: They are named collections of method signatures. Here are some good resources to understand interfaces in Go:
     a. https://gobyexample.com/interfaces
