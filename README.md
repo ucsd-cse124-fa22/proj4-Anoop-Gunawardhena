@@ -1,4 +1,4 @@
-# Surfstore
+![image](https://github.com/ucsd-cse124-fa22/proj4-Anoop-Gunawardhena/assets/76988884/969351fc-99b3-4386-b65f-747d2fe12d7e)# Surfstore
 
 This is the info document for Project 4: Surfstore, a part of CSE 124 Networked Services, in compiling this user manual, I have included sections from the original assignment document for your privilege.
 
@@ -17,6 +17,13 @@ The MetaStore service manages the metadata of files and the entire system. Most 
 
 ![Visualization of surfstores functionality](surfstore.PNG)
 
+
+**Data Logistics**
+In this section, we’ll go over some of the fundamentals of SurfStore: blocks, files, and versioning. 
+Blocks, hashes, and hashlists
+A file in SurfStore is broken into an ordered sequence of one or more blocks. Each block is of uniform size (defined by the command line argument), except for the last block in the file, which may be smaller (but must be at least 1 byte large). As an example, assume the block size is 4096 bytes, and consider the following file:
+![Visualization of a file's data composition and its hashes](surfstore2.PNG)
+The file ‘MyFile.mp4’ is 14,437 bytes long, and the block size is 4KB. The file is broken into blocks b0, b1, b2, and b3 (which is only 2,149 bytes long). For each block, a hash value is generated using the SHA-256 hash function. So for MyFile.mp4, those hashes will be denoted as [h0, h1, h2, h3] in the same order as the blocks. This set of hash values, in order, represents the file, and is referred to as the hashlist. Note that if you are given a block, you can compute its hash by applying the SHA-256 hash function to the block. This also means that if you change data in a block the hash value will change as a result. To update a file, you change a subset of the bytes in the file, and recompute the hashlist. Depending on the modification, at least one, but perhaps all, of the hash values in the hashlist will change.
 
 
 
