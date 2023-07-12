@@ -48,7 +48,7 @@ Next, it is possible that there are new files in the local base directory that a
 **Client**
 For this project, clients will sync the contents of a “base directory” by:
 go run cmd/SurfstoreClientExec/main.go -d <meta_addr:port> <base_dir> <block_size>
-[!Sample code](
+[!Sample code](surfstore3.PNG)
 Usage:
 -d:
 Output log statements
