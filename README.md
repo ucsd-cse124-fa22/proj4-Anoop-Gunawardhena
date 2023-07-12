@@ -69,105 +69,10 @@ When iteratively developing your implementation of Surfstore, it’ll be benefic
 **Separate Server Processes**
 
 For other scenarios where you might want to test having separate MetaStores and BlockStores, you can use the other two service types. Below, I’ve given examples for starting separate MetaStores and BlockStores locally, but you can just as easily do the same with different hosts e.g. maybe having the MetaStore on local and the BlockStore on an AWS instance. 
-
-/*
-  The first command below creates a server process that registers 
-  only the BlockStore interface and listens only to localhost on port 8081. 
-  (& just means to run the process in the background i.e. the shell
-  (parent) doesn’t wait for the started server (child) to finish. However,
-  you’ll need to remember to kill the process when you’re done. Another way
-  to do this is just to run the commands below on separate terminals 
-  without the ‘&’). 
-
-  Next, the second command starts a server process that registers only the 
-  MetaStore interface and listens only to localhost on port 8080 (default). 
-  Furthermore, it’s configured to be initialized with the address of the 
-  BlockStore that we create above (localhost:8081)
-*/
-
-> go run cmd/SurfstoreServerExec/main.go -s block -p 8081 -l &
-> go run cmd/SurfstoreServerExec/main.go -s meta -l localhost:8081
+![Sample code6](surfstore6.PNG)
 
 
-Before you get started, make sure you understand the following 2 things about Go. (These will also be covered in class and in discussions)
-1. Interfaces: They are named collections of method signatures. Here are some good resources to understand interfaces in Go:
-    a. https://gobyexample.com/interfaces
-    b. https://jordanorelli.com/post/32665860244/how-to-use-interfaces-in-go
 
-2. gRPC: You should know how to write gRPC servers and clients in Go. The [gRPC official documentation](https://grpc.io/docs/languages/go/basics/) of the *grpc* is a good resource.
-
-## Protocol buffers
-
-The starter code defines the following protocol buffer message type in `SurfStore.proto`:
-
-```
-message Block {
-    bytes blockData = 1;
-    int32 blockSize = 2;
-}
-
-message FileMetaData {
-    string filename = 1;
-    int32 version = 2;
-    repeated string blockHashList = 3;
-}
-...
-```
-
-`SurfStore.proto` also defines the gRPC service:
-```
-service BlockStore {
-    rpc GetBlock (BlockHash) returns (Block) {}
-    rpc PutBlock (Block) returns (Success) {}
-    rpc HasBlocks (BlockHashes) returns (BlockHashes) {}
-}
-
-service MetaStore {
-    rpc GetFileInfoMap(google.protobuf.Empty) returns (FileInfoMap) {}
-    rpc UpdateFile(FileMetaData) returns (Version) {}
-    rpc GetBlockStoreAddr(google.protobuf.Empty) returns (BlockStoreAddr) {}
-}
-```
-
-**You need to generate the gRPC client and server interfaces from our .proto service definition.** We do this using the protocol buffer compiler protoc with a special gRPC Go plugin (The [gRPC official documentation](https://grpc.io/docs/languages/go/basics/) introduces how to install the protocol compiler plugins for Go).
-
-```shell
-protoc --proto_path=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative pkg/surfstore/SurfStore.proto
-```
-
-Running this command generates the following files in the `pkg/surfstore` directory:
-- `SurfStore.pb.go`, which contains all the protocol buffer code to populate, serialize, and retrieve request and response message types.
-- `SurfStore_grpc.pb.go`, which contains the following:
-	- An interface type (or stub) for clients to call with the methods defined in the SurfStore service.
-	- An interface type for servers to implement, also with the methods defined in the SurfStore service.
-
-## Surfstore Interface
-`SurfstoreInterfaces.go` also contains interfaces for the BlockStore and the MetadataStore:
-
-```go
-type MetaStoreInterface interface {
-	// Retrieves the server's FileInfoMap
-	GetFileInfoMap(ctx context.Context, _ *emptypb.Empty) (*FileInfoMap, error)
-
-	// Update a file's fileinfo entry
-	UpdateFile(ctx context.Context, fileMetaData *FileMetaData) (*Version, error)
-
-	// Get the the BlockStore address
-	GetBlockStoreAddr(ctx context.Context, _ *emptypb.Empty) (*BlockStoreAddr, error)
-}
-
-type BlockStoreInterface interface {
-	// Get a block based on blockhash
-	GetBlock(ctx context.Context, blockHash *BlockHash) (*Block, error)
-
-	// Put a block
-	PutBlock(ctx context.Context, block *Block) (*Success, error)
-
-	// Given a list of hashes “in”, returns a list containing the
-	// subset of in that are stored in the key-value store
-	HasBlocks(ctx context.Context, blockHashesIn *BlockHashes) (*BlockHashes, error)
-}
-```
 
 ## Implementation
 ### Server
