@@ -1,6 +1,6 @@
 # Surfstore
 
-This is the starter code for Project 4: Surfstore.
+This is the info document for Project 4: Surfstore, a part of CSE 124 Networked Services
 
 Before you get started, make sure you understand the following 2 things about Go. (These will also be covered in class and in discussions)
 1. Interfaces: They are named collections of method signatures. Here are some good resources to understand interfaces in Go:
